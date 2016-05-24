@@ -1,12 +1,17 @@
 <?php
+$apiClient = new eBossApiClient();
+$params  = array();
+
 if ($_POST['btnSubmit'] == 'Send') {
-		$apiClient = new eBossApiClient();
-		$params  = array();
 
 		if (!empty($_POST['username'])) $params['login'] = $_POST['username'];
 		if (!empty($_POST['password'])) $params['password'] = $_POST['password'];
 
-		$candidate = $apiClient->candidateLogin($params, true);
+		if ($params['login'] && $params['password']) {
+				$candidate = $apiClient->candidateLogin($params, true);
+		} else {
+				$_SESSION['message'] = 'Problem in authentication';
+		}
 
 		if (isset($candidate[0]['id'])) {
 				$_SESSION['eboss']['authenticated'] = true;
@@ -16,6 +21,46 @@ if ($_POST['btnSubmit'] == 'Send') {
 				wp_redirect('/jobs/');
 		} else {
 				$_SESSION['message'] = 'Problem in authentication';
+		}
+
+}
+
+/*
+ *  Password Reset
+ **/
+
+if (isset($_GET['action'])) {
+		if ($_GET['action'] === "lostpassword" && isset($_POST['email'])) {
+
+				$params = array('login' => $_POST['email']);
+				$candidate = $apiClient->candidateLogin($params, true);
+
+				if (empty($candidate) && !isset($candidate['id'])) {
+						$_SESSION['message'] = $_POST['email'] . ' is not associated with any accounts.';
+				} else {
+						$password = get_unique_id();
+						$id= $candidate['id'];
+						if ($id) {
+								$isUpdated = $apiClient->updateUser($candidateId, ['password' => $password]);
+								if ($isUpdated) {
+
+										$subject = "[" . get_bloginfo( 'name' ) . "] Password Reset";
+										$message = "Someone requested that the password be reset for the following account: <br/> <br/>";
+										$message .= "http://" . $_SERVER['SERVER_NAME'] . " <br/> <br/><br/>";
+										$message .=  "<b>Username:</b> " . $_POST['email'] . " <br/> ";
+										$message .=  "<b>New Password:</b> " . $password . " <br/> <br/>";
+										$message .=  " <br/><br/><br/><br/> To reset your password, visit the following address: " .  "http://" . $_SERVER['SERVER_NAME'] . "/account-login/?action=lostpassword";
+
+										$headers[] = "Content-type: text/html; charset=utf-8" ;
+										$headers[] = 'From: no-reply <no-reply@' . $_SERVER['SERVER_NAME'] . "\r\n";
+
+										wp_mail($_POST['email'],$subject,$message,$headers);
+										wp_redirect('/account-login/');
+								}
+						}
+
+				}
+
 		}
 
 }
