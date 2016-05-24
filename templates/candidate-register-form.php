@@ -28,7 +28,7 @@ if (!empty($_POST)) {
 
 								$getQuery = array();
 								if (isset($_GET['company-id'])) {
-										$getQuery['company_id'] = $_GET['company-id'];
+										$getQuery['company-id'] = $_GET['company-id'];
 								}
 
 								if (isset($_GET['id'])) {
@@ -127,8 +127,8 @@ if (!empty($_POST)) {
 						}
 
 						$getQuery = array('step' => 2);
-						if (isset($_GET['company_id'])) {
-								$getQuery['company_id'] = $_GET['company_id'];
+						if (isset($_GET['company-id'])) {
+								$getQuery['company-id'] = $_GET['company-id'];
 						}
 
 						if (isset($_GET['id'])) {
