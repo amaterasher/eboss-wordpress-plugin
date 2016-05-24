@@ -1,5 +1,30 @@
 <?php
 $apiClient = new eBossApiClient();
+$params = array();
+$candidateId = $_SESSION['eboss']['uid'];
+
+$candidate = $apiClient->getUserById($candidateId);
+if ($_POST && $candidateId) {
+		$_SESSION['message'] = "Unable to update password";
+		$candidate = $apiClient->getUserById($candidateId);
+
+		if ($candidate['password'] && isset($_POST['cur_pass'])) {
+				if (eBossApiClient::checkUserPassword($candidate['password'], $_POST['cur_pass'])) {
+
+						if ($_POST['password2']) {
+								$params['password'] = $_POST['password2'];
+								$isUpdated = $apiClient->updateUser($candidateId, $params);
+
+								if ($isUpdated) {
+										$_SESSION['message'] = "Your password has been updated successfully";
+								}
+						}
+
+				} else {
+						$_SESSION['message'] = "Current Password is incorrect.";
+				}
+		}
+}
 
 ?>
 
@@ -31,7 +56,7 @@ $apiClient = new eBossApiClient();
 <form id="frmChangePass" method="post">
 
 		<?php
-		if ($_SESSION['message'] != ''): ?>
+		if ($_SESSION['message']): ?>
 				<?php
 				$message = $_SESSION['message'];
 				unset($_SESSION['message']);
@@ -40,7 +65,8 @@ $apiClient = new eBossApiClient();
 						<div class="large-12 columns"><?php echo $message ?></div>
 				</div>
 		<?php endif; ?>
-
+		<br/>
+		<br/>
 		<div class="row">
 				<div class="large-12 columns">
 						<label>Current Password*</label>

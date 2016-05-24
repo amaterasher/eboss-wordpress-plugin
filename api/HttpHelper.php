@@ -48,26 +48,28 @@ class HttpHelper
 		);
 
 		/**
+		 *
 		 * Start performing GET-HTTP-Request
 		 *
-		 * @param string  $url
-		 * @param boolean $raw if response body contains JSON and should be decoded
+		 * @param           $url
+		 * @param bool|true $raw if response body contains JSON and should be decoded
 		 *
-		 * @return mixed response
+		 * @return mixed
+		 * @throws Exception
 		 */
 		public function get($url, $raw = true)
 		{
 				return $this->_httpRequest('GET', $url, $raw);
 		}
 
-
 		/**
+		 *
 		 * Start performing HEAD-HTTP-Request
 		 *
-		 * @param string $url
-		 * @param string $body
+		 * @param $url
 		 *
-		 * @return mixed response
+		 * @return mixed
+		 * @throws Exception
 		 */
 		public function head($url)
 		{
@@ -76,43 +78,60 @@ class HttpHelper
 
 
 		/**
+		 *
 		 * Start performing POST-HTTP-Request
 		 *
-		 * @param string  $url
-		 * @param string  $body
-		 * @param boolean $raw if response body contains JSON and should be decoded
+		 * @param           $url
+		 * @param bool|true $raw if response body contains JSON and should be decoded
 		 *
-		 * @return mixed response
+		 * @return mixed
+		 * @throws Exception
 		 */
 		public function post($url, $raw = true)
 		{
 				return $this->_httpRequest('POST', $url, $raw);
 		}
 
-
 		/**
+		 *
 		 * Start performing PUT-HTTP-Request
 		 *
-		 * @param string  $url
-		 * @param string  $body
-		 * @param boolean $raw if response body contains JSON and should be decoded
+		 * @param           $url
+		 * @param bool|true $raw if response body contains JSON and should be decoded
 		 *
-		 * @return mixed response
+		 * @return mixed
+		 * @throws Exception
 		 */
 		public function put($url, $raw = true)
 		{
 				return $this->_httpRequest('PUT', $url, $raw);
 		}
 
+		/**
+		 *
+		 * Start performing PATCH-HTTP-Request
+		 *
+		 * @param           $url
+		 * @param bool|true $raw $raw if response body contains JSON and should be decoded
+		 *
+		 * @return mixed
+		 * @throws Exception
+		 */
+		public function patch($url, $raw = true)
+		{
+				return $this->_httpRequest('PATCH', $url, $raw);
+		}
+
 
 		/**
+		 *
 		 * Start performing DELETE-HTTP-Request
 		 *
-		 * @param string  $url
-		 * @param string  $body
-		 * @param boolean $raw if response body contains JSON and should be decoded
+		 * @param           $url
+		 * @param bool|true $raw  if response body contains JSON and should be decoded
 		 *
-		 * @return mixed response
+		 * @return mixed
+		 * @throws Exception
 		 */
 		public function delete($url, $raw = true)
 		{
@@ -250,6 +269,8 @@ class HttpHelper
 
 				//get header
 				$this->setOption(CURLOPT_HEADER, true);
+				$this->setOption(CURLOPT_TIMEOUT, 0);
+				$this->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 
 				/**
 				 * proceed curl

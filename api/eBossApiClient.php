@@ -136,9 +136,6 @@ class eBossApiClient
 					"Content-Type: application/json",
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
-
 				$response = $curl->post($endPointUri, false);
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
@@ -180,9 +177,6 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
-
 				$response = $curl->post($endPointUri, false);
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
@@ -217,8 +211,6 @@ class eBossApiClient
 					"Content-Type: application/json"
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->post($endPointUri, false);
 				if (($curl->responseCode >= 400 && $curl->responseCode < 500)) {
 						if (is_array($curl->response)) {
@@ -233,6 +225,45 @@ class eBossApiClient
 				}
 
 				return $response;
+		}
+
+		/**
+		 *
+		 *
+		 * @param null  $userId
+		 * @param array $params
+		 *
+		 * @return bool|mixed|null
+		 */
+		public function updateUser($userId = null, $params = array())
+		{
+				if (!$userId) return false;
+
+				$params = self::escapeParameters($params);
+
+				$endPointUri = $this->prepareRequestUrl(self::USERS_ENDPOINT);
+				$endPointUri .= '/' . $userId;
+
+				$curl = new HttpHelper();
+				$curl->setOption(CURLOPT_POSTFIELDS, json_encode($params));
+				$curl->setOption(CURLOPT_HTTPHEADER,[
+					"Authorization: Bearer " . $this->accessToken,
+					"Content-Type: application/json"
+				]);
+
+				$response = $curl->patch($endPointUri, false);
+
+				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
+						if (is_array($curl->response)) {
+								$this->errors = $curl->response;
+						} else {
+								$this->errors = json_decode($curl->response,true);
+						}
+						return null;
+				}
+
+				return $response;
+
 		}
 
 		/**
@@ -257,8 +288,6 @@ class eBossApiClient
 					"Content-Type: application/json"
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->post($endPointUri, false);
 				if (($curl->responseCode >= 400 && $curl->responseCode < 500)) {
 						if (is_array($curl->response)) {
@@ -296,8 +325,6 @@ class eBossApiClient
 						"Content-Type: application/json"
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->post($endPointUri, false);
 				if (($curl->responseCode >= 400 && $curl->responseCode < 500)) {
 						if (is_array($curl->response)) {
@@ -456,6 +483,41 @@ class eBossApiClient
 		 */
 
 		/**
+		 * Get User by ID
+		 *
+		 * @param null $id
+		 *
+		 * @return array|mixed|null
+		 */
+		public function getUserById($id = null)
+		{
+				if (empty($id)) return array();
+
+				$endPointUri = $this->prepareRequestUrl(self::USERS_ENDPOINT);
+				if ($id) {
+						$endPointUri .= '/' . $id;
+				}
+
+				$curl = new HttpHelper();
+				$curl->setOption(CURLOPT_HTTPHEADER,[
+					"Authorization: Bearer " . $this->accessToken
+				]);
+
+				$response = $curl->get($endPointUri, false);
+				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
+						if (is_array($curl->response)) {
+								$this->errors = $curl->response;
+						} else {
+								$this->errors = json_decode($curl->response,true);
+						}
+						return null;
+				}
+
+				return $response;
+
+		}
+
+		/**
 		 * @return mixed|null
 		 */
 		public function getJobTitles()
@@ -467,8 +529,6 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
 
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
@@ -496,8 +556,6 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
 
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
@@ -525,10 +583,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -572,8 +627,6 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
 
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
@@ -611,10 +664,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -650,10 +700,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -696,10 +743,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -713,6 +757,15 @@ class eBossApiClient
 
 		}
 
+		/**
+		 *
+		 * Get Candidate
+		 *
+		 * @param array      $params
+		 * @param bool|false $search
+		 *
+		 * @return mixed|null
+		 */
 		public function getCandidates($params = array(), $search = false)
 		{
 				$candidateId = 0;
@@ -739,10 +792,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
 				$response = $curl->get($endPointUri, false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -808,11 +858,7 @@ class eBossApiClient
 					"Authorization: Bearer " . $this->accessToken,
 				]);
 
-				$curl->setOption(CURLOPT_TIMEOUT, 0);
-				$curl->setOption(CURLOPT_CONNECTTIMEOUT, 0);
-
 				$response = $curl->get($endPointUri,false);
-
 				if (($curl->responseCode >= 400 && $curl->responseCode <= 510)) {
 						if (is_array($curl->response)) {
 								$this->errors = $curl->response;
@@ -822,13 +868,8 @@ class eBossApiClient
 						return array();
 				}
 
-
 				return $response;
-
 		}
-
-
-
 
 
 		/**
@@ -855,6 +896,23 @@ class eBossApiClient
 						return 'n-a';
 				}
 				return $text;
+
+		}
+
+		/**
+		 *
+		 * @param null $userPassword
+		 * @param null $inputPassword
+		 *
+		 * @return bool
+		 */
+		public static function checkUserPassword($userPassword = null, $inputPassword = null)
+		{
+				if (!$userPassword && !$inputPassword) return false;
+
+				if ($userPassword === md5($inputPassword)) return true;
+
+				return false;
 
 		}
 }

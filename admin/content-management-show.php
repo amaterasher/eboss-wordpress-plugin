@@ -118,15 +118,35 @@ if (isset($_POST) && !empty($_POST)) {
 		<br/>
 		<br/>
 		<h2>Short Code List</h2>
-		<p></p>
+		<label style="font-weight: 300;">Paste it on any page you want to render the corresponding component.</label>
+		<br>
+		<br>
 		<table class="form-table">
-				<tr>
-						<td>
-								<p>[eboss_v3_list_jobs] </p>
-						</td>
-						<td>
-								<p style="font-weight: 300;">List all jobs. Supports filter.</p>
-						</td>
-				</tr>
+				<?php
+
+						$shortcodes = array(
+								"eboss_v3_list_jobs" => "List all jobs. (Supports filter from job search)",
+								"eboss_v3_job_search" => "Renders job search form.",
+								"eboss_v3_list_news" => "List all news.",
+								"eboss_v3_candidate_reg_form" => "Candidate registration form.",
+								"eboss_v3_client_registration_form" => "Client registration form.",
+								"eboss_v3_job_detail" => "Job detail. Renders job information and apply button",
+								"eboss_v3_account_login" => "Candidate login form.",
+								"eboss_v3_account_logout" => "Candidate logout",
+								"eboss_v3_candidate_profile" => "Candidate profile",
+								"eboss_v3_account_settings" => "Candidate account. Renders change new password form.",
+						);
+
+					?>
+				<?php foreach ($shortcodes as $key => $value ): ?>
+						<tr>
+								<td>
+										<p>[<?php echo $key; ?>] </p>
+								</td>
+								<td>
+										<p style="font-weight: 300;"><?php echo $value; ?></p>
+								</td>
+						</tr>
+				<?php endforeach; ?>
 		</table>
 </div>
