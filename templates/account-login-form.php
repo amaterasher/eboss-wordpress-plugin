@@ -38,7 +38,11 @@ if (isset($_GET['action'])) {
 				if (empty($candidate) && !isset($candidate['id'])) {
 						$_SESSION['message'] = $_POST['email'] . ' is not associated with any accounts.';
 				} else {
-						$password = get_unique_id();
+						$string = uniqid();
+						$string .= mt_rand();
+						str_shuffle($string);
+						$password =  substr($string, 0, 6);
+
 						$id= $candidate['id'];
 						if ($id) {
 								$isUpdated = $apiClient->updateUser($candidateId, ['password' => $password]);
