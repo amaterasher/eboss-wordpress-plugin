@@ -35,7 +35,7 @@ if (isset($_GET['action'])) {
 				$params = array('login' => $_POST['email']);
 				$candidate = $apiClient->candidateLogin($params, true);
 
-				if (empty($candidate) && !isset($candidate['id'])) {
+				if (empty($candidate) && !isset($candidate[0]['id'])) {
 						$_SESSION['message'] = $_POST['email'] . ' is not associated with any accounts.';
 				} else {
 						$string = uniqid();
@@ -43,8 +43,8 @@ if (isset($_GET['action'])) {
 						str_shuffle($string);
 						$password =  substr($string, 0, 6);
 
-						$id= $candidate['id'];
-						if ($id) {
+						$candidateId= $candidate[0]['id'];
+						if ($candidateId) {
 								$isUpdated = $apiClient->updateUser($candidateId, ['password' => $password]);
 								if ($isUpdated) {
 
