@@ -29,7 +29,12 @@ if (isset($_GET['keywords']) && $_GET['keywords']) {
 		$params['keywords'] = $_GET['keywords'];
 }
 
+if (isset($_GET['pg'])) {
+		$params['page'] = $_GET['pg'];
+}
+
 $jobs = $apiClient->getJobs($params, true);
+$jobListPager = $apiClient->getPager("/jobs", $_GET);
 ?>
 
 <?php if ($jobs): ?>
@@ -92,3 +97,5 @@ $jobs = $apiClient->getJobs($params, true);
 <?php else : ?>
 		No jobs found
 <?php endif; ?>
+
+<?php echo $jobListPager;  ?>

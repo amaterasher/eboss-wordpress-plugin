@@ -49,7 +49,10 @@ class eBossApiClient
 		private $apiKey;
 		private $apiSecret;
 		private $accessToken = null;
-		public $errors = array();
+		private $header = null;
+
+		public  $errors = array();
+		public  $pager = array();
 
 		public function __construct()
 		{
@@ -81,24 +84,6 @@ class eBossApiClient
 						$this->accessToken = $token;
 
 				}
-		}
-
-		/**
-		 * @param array $params
-		 *
-		 * @return array
-		 */
-		public static function escapeParameters($params = array())
-		{
-				if (!is_array($params)) return $params;
-
-				foreach ($params as $key => $value) {
-						if (!is_array($value)) {
-								$params[$key] = addslashes(strip_tags(trim($value)));
-						}
-				}
-
-				return $params;
 		}
 
 		/**
@@ -868,9 +853,66 @@ class eBossApiClient
 						return array();
 				}
 
+				if ($curl->header) $this->header = $curl->header;
+
 				return $response;
 		}
 
+		/**
+		 *
+		 * Get Pager from
+		 *
+		 * @param string $relativeUrl
+		 * @param array  $getQueryParams
+		 *
+		 * @return string
+		 */
+		public function getPager($relativeUrl = '', $getQueryParams = array())
+		{
+				if (empty($relativeUrl)) return "";
+
+				$page = 1;
+
+				if (isset($getQueryParams['pg'])) {
+						$page = $getQueryParams['pg'];
+				}
+
+				$pager = "";
+
+				if ($this->header) {
+						$pageTotalCount = $this->header['x-pagination-page-count'];
+
+						if ($page > 1) {
+								$prevQuery = $getQueryParams;
+								$prevQuery['pg'] = $page - 1;
+								$getQuery = http_build_query($prevQuery);
+								$url = $relativeUrl . '?' . $getQuery;
+								$pager .= ' <a href="' . $url . '">Prev</a> ';
+						}
+
+					for ($i=1; $i <= $pageTotalCount; $i++) {
+
+							if ($page == $i) {
+									$pager .= " " . $i . " ";
+							} else {
+									$getQueryParams['pg'] = $i;
+									$getQuery = http_build_query($getQueryParams);
+									$url = $relativeUrl . '?' . $getQuery;
+									$pager .= ' <a href="' . $url . '">' . $i . '</a> ';
+							}
+					}
+
+						if ($page < $pageTotalCount) {
+								$nextQuery = $getQueryParams;
+								$nextQuery['pg'] = $page + 1;
+								$getQuery = http_build_query($nextQuery);
+								$url = $relativeUrl . '?' . $getQuery;
+								$pager .= ' <a href="' . $url . '">Next</a> ';
+						}
+				}
+
+				return $pager;
+		}
 
 		/**
 		 *
@@ -914,5 +956,23 @@ class eBossApiClient
 
 				return false;
 
+		}
+
+		/**
+		 * @param array $params
+		 *
+		 * @return array
+		 */
+		public static function escapeParameters($params = array())
+		{
+				if (!is_array($params)) return $params;
+
+				foreach ($params as $key => $value) {
+						if (!is_array($value)) {
+								$params[$key] = addslashes(strip_tags(trim($value)));
+						}
+				}
+
+				return $params;
 		}
 }
